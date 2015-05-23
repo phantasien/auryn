@@ -1,0 +1,21 @@
+#!/usr/bin/env node
+
+/*
+ * Auryn client
+ */
+
+
+/**
+ * Module dependencies.
+ */
+
+var auryn = require('../package.json');
+
+var program = require('commander');
+
+program
+  .version(auryn.version)
+  .command('config', 'get / set auryn configuration variables')
+  .command('make', 'create / update project Makefile')
+  .command('render', 'render a template with project and settings context')
+  .parse(process.argv);

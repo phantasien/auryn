@@ -1,0 +1,69 @@
+#!/usr/bin/env node
+
+/*
+ * List env items (libs / sources)
+ */
+
+
+/**
+ * Module dependencies.
+ */
+
+var auryn = require('../package.json');
+
+var program = require('commander');
+
+var _ = require('lodash');
+var async = require('async');
+var auryn = require('../package.json');
+var config = require('../lib/config');
+var fs = require('fs');
+var handlebars = require('handlebars');
+var path = require('path');
+var program = require('commander');
+
+
+var templateDir = path.join(__dirname, '../lib/templates');
+
+program
+  .version(auryn.version)
+  .usage('<template_name> <output_path>')
+  .option('-p, --project-path [path]', 'Choose another path than current', '.')
+  .option('-t, --template-dir [dir]', 'Set to another template directory', templateDir)
+  .parse(process.argv);
+
+if (program.args.length !== 2) {
+  program.outputHelp();
+  process.exit(1);
+}
+
+
+var steps = {};
+
+steps.readConfig = function (next) {
+  config.resolve({projectPath: program.projectPath}, next);
+};
+
+steps.readTemplate = function (ctx, next) {
+  fs.readFile(path.join(program.templateDir, program.args[0]), 'utf8', function (err, raw) {
+    if (err) return next(err);
+
+    try {
+      next(null, handlebars.compile(raw)(ctx));
+    } catch (hbsErr) {
+      next(hbsErr);
+    }
+
+  });
+};
+
+steps.renderData = function (data, next) {
+  fs.writeFile(program.args[1], data, next);
+};
+
+async.waterfall(_.values(steps), function (err) {
+  if (err) {
+    console.error(err);
+    process.exit(1);
+  }
+});

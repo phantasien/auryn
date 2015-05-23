@@ -1,0 +1,34 @@
+{
+  "name": "auryn",
+  "version": "0.0.3-pre",
+  "description": "magic item for node developer into mobile fantasia",
+  "main": "index.js",
+  "preferGlobal": true,
+  "scripts": {
+    "test": "make test"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/phantasien/auryn"
+  },
+  "author": "David Corticchiato",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/phantasien/auryn/issues"
+  },
+  "homepage": "https://github.com/phantasien/auryn",
+  "dependencies": {
+    "async": "^0.9.0",
+    "cheerio": "^0.17.0",
+    "commander": "^2.3.0",
+    "fs-extra": "^0.11.0",
+    "handlebars": "^2.0.0-beta.1",
+    "lodash": "^2.4.1",
+    "osenv": "^0.1.0",
+    "xcli": "0.0.3",
+    "xed": "dawicorti/xed"
+  },
+  "devDependencies": {
+    "mocha": "^1.21.4"
+  }
+}

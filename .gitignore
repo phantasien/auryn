@@ -1,0 +1,10 @@
+node_modules
+npm-debug.log
+third_party
+src/android/gen
+src/android/obj
+src/android/bin
+src/android/libs
+src/android/.ant-targets-build.xml
+*.o
+*.a
