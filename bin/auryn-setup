@@ -1,0 +1,35 @@
+#!/usr/bin/env node
+
+/*
+ * Installs the environment for mobile flights
+ */
+
+
+/**
+ * Module dependencies.
+ */
+
+var auryn = require('../package.json');
+var program = require('commander');
+
+
+program
+  .version(auryn.version)
+  .usage('<fomula>')
+  .parse(process.argv);
+
+
+var formula = null;
+
+
+try {
+  formula = require('../lib/formula/' + program.args[0]);
+} catch(err) {
+  console.error('no formula named', program.args[0]);
+  process.exit(1);
+}
+
+
+formula.validate(function (err) {
+  if (err && err.message) console.log(err.message);
+});
