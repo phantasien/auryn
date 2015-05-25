@@ -10,11 +10,28 @@
  */
 
 var auryn = require('../package.json');
+var config = require('../lib/config');
 var program = require('commander');
 
 
 program
   .version(auryn.version)
-  .command('get', 'get auryn configuration variable')
-  .command('set', 'set auryn configuration variable')
+  .usage('<parameter> [value]')
   .parse(process.argv);
+
+var parameter = program.args[0];
+var value = program.args[1];
+
+if (!value) {
+  config.get(parameter, function (err, value) {
+    console.log(value);
+  });
+} else {
+  config.set(parameter, value, function (err) {
+
+    if (err) {
+      console.error(err.toString());
+      process.exit(1);
+    }
+  });
+}
