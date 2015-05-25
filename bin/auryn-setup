@@ -9,6 +9,7 @@
  * Module dependencies.
  */
 
+var async = require('async');
 var auryn = require('../package.json');
 var program = require('commander');
 
@@ -20,6 +21,8 @@ program
 
 
 var formula = null;
+var fatals = [];
+var fixables = [];
 
 
 try {
@@ -29,7 +32,27 @@ try {
   process.exit(1);
 }
 
+function validate(formula, done) {
+  async.eachSeries(formula.dependencies || [], validate, function () {
+    formula.validate(function (err) {
+      if (!!err && !formula.install) fatals.push(formula);
+      if (!!err && !!formula.install) fixables.push(formula);
 
-formula.validate(function (err) {
-  if (err && err.message) console.log(err.message);
+      done();
+    });
+  });
+}
+
+
+validate(formula, function () {
+  if (fatals.length > 0) {
+    console.log(
+      'Some requirements are missing :\n\n',
+      fatals.map(function (fatal) {
+        return '  * ' + fatal.label;
+      }).join('\n') + '\n'
+    );
+    
+    process.exit(1);
+  }
 });
