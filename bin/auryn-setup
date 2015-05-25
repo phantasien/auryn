@@ -11,6 +11,7 @@
 
 var async = require('async');
 var auryn = require('../package.json');
+var chalk = require('chalk');
 var program = require('commander');
 
 
@@ -52,7 +53,12 @@ validate(formula, function () {
         return '  * ' + fatal.label;
       }).join('\n') + '\n'
     );
-    
+
     process.exit(1);
+  } else {
+    async.eachSeries(fixables, function (fixable, next) {
+      console.log('installing dependency :', chalk.yellow(fixable.label));
+      fixable.install(next);
+    }, function () {});
   }
 });
