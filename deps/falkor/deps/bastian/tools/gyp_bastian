@@ -1,0 +1,105 @@
+#!/usr/bin/env python
+
+
+import glob
+import os
+import platform
+import re
+import shlex
+import string
+import subprocess
+import sys
+
+
+SCRIPT_DIR = os.path.dirname(os.path.realpath(__file__))
+BASTIAN_ROOT = os.path.abspath(os.path.join(SCRIPT_DIR, os.pardir))
+V8_ROOT = os.path.join(BASTIAN_ROOT, 'deps', 'v8')
+GYP_DEFINE_PATTERN = re.compile(r'\-D([\w_]+)=(.+)')
+
+def run_gyp(args):
+  import gyp
+
+  rc = gyp.main(args)
+
+  if rc != 0:
+    print 'Error running GYP'
+    sys.exit(rc)
+
+def parse_arg(ctx, arg):
+  def_match = GYP_DEFINE_PATTERN.match(arg)
+
+  if def_match is not None:
+    ctx[def_match.group(1)] = def_match.group(2)
+
+  return arg
+
+if __name__ == '__main__':
+  ctx = {}
+  args = [arg for arg in [
+    parse_arg(ctx, arg) for arg in sys.argv[1:]
+  ] if arg is not None]
+
+  if not 'bastian_engine' in ctx:
+    print 'Error: bastian_engine is not defined'
+    sys.exit(1)
+
+  if not 'bastian_project' in ctx:
+    print 'Error: bastian_project is not defined'
+    sys.exit(1)
+
+  make_format = 'make'
+
+  if ctx.get('OS', '').startswith('ios'):
+    make_format = 'xcode'
+    intermediate_dir = '%s-%s' % (
+      ctx['bastian_engine'],
+      ctx['OS']
+    )
+  else:
+    if not 'target_arch' in ctx:
+      print 'Error: target_arch is not defined'
+      sys.exit(1)
+    intermediate_dir = '%s-%s' % (
+      ctx['bastian_engine'],
+      ctx['target_arch']
+    )
+
+  if ctx.get('OS', None) == 'android':
+    make_format = 'make-android'
+    intermediate_dir = '%s-android_%s' % (
+      ctx['bastian_engine'],
+      ctx['target_arch']
+    )
+    args.append('-I' + os.path.join(V8_ROOT, 'build', 'android.gypi'))
+    args.append('-Dv8_target_arch=' + ctx['target_arch'])
+    args.append('-Dandroid_target_arch=' + ctx['target_arch'])
+    args.append('-Dv8_enable_backtrace=1')
+    args.append('-Darm_fpu=default')
+    args.append('-Darm_float_abi=default')
+    args.append('-Darm_neon=0')
+
+  output_dir = os.path.join(ctx['bastian_project'], 'out', intermediate_dir)
+
+  # Set up GYP and V8 env scripts paths
+
+  sys.path.append(os.path.join(BASTIAN_ROOT, 'tools', 'gyp', 'pylib'))
+  sys.path.append(os.path.join(V8_ROOT, 'build'))
+
+  # Specialize gyp call for Bastian  
+
+  if sys.platform.startswith('linux'):
+    args.append('-Dbastian_sub_dir=/obj.target')
+  else:
+    args.append('-Dbastian_sub_dir=')
+
+  args.append('-I' + os.path.join(V8_ROOT, 'build', 'standalone.gypi'))
+  args.append('--depth=' + os.path.relpath(ctx['bastian_project']))
+  args.append('--generator-output=' + output_dir)
+  args.append('-Goutput_dir=' + output_dir)
+  args.append('-Doutput_dir=' + output_dir)
+  args.append('-Dcomponent=static_library')
+  args.append('-Dv8_enable_i18n_support=0')
+  args.append('-Dlibrary=static_library')
+
+  args.append('--format=' + make_format)
+  run_gyp(args)
