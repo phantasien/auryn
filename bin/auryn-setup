@@ -57,8 +57,10 @@ validate(formula, function () {
     process.exit(1);
   } else {
     async.eachSeries(fixables, function (fixable, next) {
-      console.log('installing dependency :', chalk.yellow(fixable.label));
+      console.log('installing dependency:', chalk.yellow(fixable.label));
       fixable.install(next);
-    }, function () {});
+    }, function (err) {
+      if (err) console.error('Error:', chalk.red(err.message));
+    });
   }
 });
