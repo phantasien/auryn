@@ -13,6 +13,8 @@ var async = require('async');
 var auryn = require('../package.json');
 var chalk = require('chalk');
 var program = require('commander');
+var readline = require('readline');
+var setup = require('../lib/setup');
 
 
 program
@@ -21,31 +23,7 @@ program
   .parse(process.argv);
 
 
-var formula = null;
-var fatals = [];
-var fixables = [];
-
-
-try {
-  formula = require('../lib/formula/' + program.args[0]);
-} catch(err) {
-  console.error('no formula named', program.args[0]);
-  process.exit(1);
-}
-
-function validate(formula, done) {
-  async.eachSeries(formula.dependencies || [], validate, function () {
-    formula.validate(function (err) {
-      if (!!err && !formula.install) fatals.push(formula);
-      if (!!err && !!formula.install) fixables.push(formula);
-
-      done();
-    });
-  });
-}
-
-
-validate(formula, function () {
+setup.listDependencies(program.args[0], function (fatals, fixables) {
   if (fatals.length > 0) {
     console.log(
       'Some requirements are missing :\n\n',
@@ -55,12 +33,34 @@ validate(formula, function () {
     );
 
     process.exit(1);
-  } else {
-    async.eachSeries(fixables, function (fixable, next) {
-      console.log('installing dependency:', chalk.yellow(fixable.label));
-      fixable.install(next);
-    }, function (err) {
-      if (err) console.error('Error:', chalk.red(err.message));
+  } else if (fixables.length > 0) {
+    var rl = readline.createInterface({
+      input: process.stdin,
+      output: process.stdout
     });
+
+    console.log('auryn is about to install:\n');
+
+    fixables.forEach(function (fixable) {
+      console.log('  * ' + chalk.yellow(fixable.label));
+    });;
+
+    console.log();
+
+    rl.question('Do you accept ? [y/n] ', function (answer) {
+      console.log();
+
+      if (answer === 'y') {
+        async.eachSeries(fixables, function (fixable, next) {
+          console.log('installing dependency:', chalk.yellow(fixable.label));
+          fixable.install(next);
+        }, function (err) {
+          if (err) console.error('Error:', chalk.red(err.message));
+        });
+      }
+
+      rl.close();
+    })
+
   }
 });

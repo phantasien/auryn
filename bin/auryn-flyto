@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 
 /*
- * Auryn client
+ * Auryn flyto command
  */
 
 
@@ -15,7 +15,5 @@ var program = require('commander');
 
 program
   .version(auryn.version)
-  .command('config', 'get / set auryn configuration variables')
-  .command('flyto', 'dock creation mobile flight')
-  .command('setup', 'installs the environment for mobile flights')
+  .command('android', 'prepare android dock')
   .parse(process.argv);

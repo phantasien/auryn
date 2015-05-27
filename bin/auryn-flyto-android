@@ -1,0 +1,28 @@
+#!/usr/bin/env node
+
+/*
+ * Get / Set Auryn configuration variables
+ */
+
+
+/**
+ * Module dependencies.
+ */
+
+var auryn = require('../package.json');
+var chalk = require('chalk');
+var setup = require('../lib/setup');
+var program = require('commander');
+
+
+program
+  .version(auryn.version)
+  .parse(process.argv);
+
+
+setup.listDependencies('android', function (fatals, fixables) {
+  if (fatals.length > 0 || fixables.length > 0) {
+    console.log('Your system is not ready for the flight.\n')
+    console.log('Please run', chalk.bgYellow.black('auryn setup android'), 'first.')
+  }
+});
