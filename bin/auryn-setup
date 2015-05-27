@@ -52,15 +52,16 @@ setup.listDependencies(program.args[0], function (fatals, fixables) {
 
       if (answer === 'y') {
         async.eachSeries(fixables, function (fixable, next) {
-          console.log('installing dependency:', chalk.yellow(fixable.label));
+          console.log('  > install', chalk.yellow(fixable.label));
           fixable.install(next);
         }, function (err) {
-          if (err) console.error('Error:', chalk.red(err.message));
+          if (err) return console.error('Error:', chalk.red(err.message));
         });
       }
 
       rl.close();
     })
-
+  } else {
+    console.log('Your system is already setup for', chalk.yellow(program.args[0]));
   }
 });
