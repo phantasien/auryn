@@ -16,4 +16,5 @@ var program = require('commander');
 program
   .version(auryn.version)
   .command('android', 'prepare android dock')
+  .command('ios', 'prepare ios dock')
   .parse(process.argv);

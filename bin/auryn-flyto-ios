@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 
 /*
- * Auryn flyto android prepare android dock
+ * Auryn flyto ios prepare ios dock
  */
 
 
@@ -20,9 +20,9 @@ program
   .parse(process.argv);
 
 
-setup.listDependencies('android', function (fatals, fixables) {
+setup.listDependencies('ios', function (fatals, fixables) {
   if (fatals.length > 0 || fixables.length > 0) {
     console.log('Your system is not ready for the flight.\n')
-    console.log('Please run', chalk.bgYellow.black('auryn setup android'), 'first.')
+    console.log('Please run', chalk.bgYellow.black('auryn setup ios'), 'first.')
   }
 });
