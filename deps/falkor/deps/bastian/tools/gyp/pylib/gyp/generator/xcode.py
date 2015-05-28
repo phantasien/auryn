@@ -585,7 +585,7 @@ def GenerateOutput(target_list, target_dicts, data, params):
       not generator_flags.get('xcode_list_excluded_files', True)
   xcode_projects = {}
   for build_file, build_file_dict in data.iteritems():
-    (build_file_root, build_file_ext) = os.path.splitext(build_file)
+    (build_file_root, build_file_ext) = os.path.splitext(os.path.basename(build_file))
     if build_file_ext != '.gyp':
       continue
     xcodeproj_path = build_file_root + options.suffix + '.xcodeproj'
