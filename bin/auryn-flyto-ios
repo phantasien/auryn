@@ -38,6 +38,11 @@ setup.listDependencies('ios', function (fatals, fixables) {
         process.exit(1);
       }
 
+      if (!cfg.project.author) {
+        console.error(chalk.red('author is not defined in package.json'));
+        process.exit(1);
+      }
+
       capsule.drop(cfg, path.resolve(path.join('.', 'dock', 'ios')) , function (err) {
 
       });
