@@ -11,8 +11,11 @@
 
 var auryn = require('../package.json');
 var chalk = require('chalk');
+var project = require('../lib/project');
 var setup = require('../lib/setup');
+var path = require('path');
 var program = require('commander');
+var HoiPoiCapsule = require('hoipoi');
 
 
 program
@@ -24,5 +27,20 @@ setup.listDependencies('ios', function (fatals, fixables) {
   if (fatals.length > 0 || fixables.length > 0) {
     console.log('Your system is not ready for the flight.\n')
     console.log('Please run', chalk.bgYellow.black('auryn setup ios'), 'first.')
+  } else {
+    var capsule = new HoiPoiCapsule(path.resolve(path.join(
+      __dirname, '..', 'lib', 'dock', 'ios'
+    )));
+
+    project.mergeWithConfig(path.resolve('.'), function (err, cfg) {
+      if (!cfg.project.bundle || !cfg.project.bundle.id) {
+        console.error(chalk.red('bundle.id is not defined in package.json'));
+        process.exit(1);
+      }
+
+      capsule.drop(cfg, path.resolve(path.join('.', 'dock', 'ios')) , function (err) {
+
+      });
+    });    
   }
 });

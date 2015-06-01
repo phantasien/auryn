@@ -1,0 +1,8 @@
+delegate.h | root | {{pascal project.name}}/AppDelegate.h
+delegate.mm | root | {{pascal project.name}}/AppDelegate.mm
+info.plist | root | {{pascal project.name}}/Info.plist
+ios.gyp | root | {{slug project.name}}.gyp
+main.mm | root | {{pascal project.name}}/main.mm
+main.storyboard | root | {{pascal project.name}}/Base.lproj/Main.storyboard
+makefile | root | Makefile
+screen.xib | root | {{pascal project.name}}/Base.lproj/LaunchScreen.xib
