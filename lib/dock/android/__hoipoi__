@@ -1,0 +1,14 @@
+activity.java | root | src/{{srcPath project.bundle.id}}/{{pascal project.name}}Activity.java
+android.mk | root | jni/Android.mk
+ant.properties | root | ant.properties
+application.mk | root | jni/Application.mk
+build.xml | root | build.xml
+@icon.png | res/drawable-hdpi/ic_launcher.png
+@icon.png | res/drawable-mdpi/ic_launcher.png
+@icon.png | res/drawable-ldpi/ic_launcher.png
+layout.xml | root | res/layout/main.xml
+main.cc | root | jni/main.cc
+makefile | root | Makefile
+manifest.xml | root | AndroidManifest.xml
+project.properties | root | project.properties
+values.xml | root | res/values/strings.xml
