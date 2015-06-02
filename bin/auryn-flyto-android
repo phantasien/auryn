@@ -32,18 +32,22 @@ setup.listDependencies('android', function (fatals, fixables) {
     console.log('Your system is not ready for the flight.\n')
     console.log('Please run', chalk.bgYellow.black('auryn setup android'), 'first.')
   } else {
+    var projectDir = path.resolve('.');
+    var dockDir = path.join(projectDir, 'dock', 'android');
     var capsule = new HoiPoiCapsule(path.resolve(path.join(
       __dirname, '..', 'lib', 'dock', 'android'
     )));
 
-    project.mergeWithConfig(path.resolve('.'), function (err, cfg) {
+    project.mergeWithConfig(projectDir, function (err, cfg) {
       if (!cfg.project.bundle || !cfg.project.bundle.id) {
         console.error(chalk.red('bundle.id is not defined in package.json'));
         process.exit(1);
       }
 
-      capsule.drop(cfg, path.resolve(path.join('.', 'dock', 'android')) , function (err) {
+      capsule.drop(cfg, dockDir, function (err) {
+        project.rsync(projectDir, path.join(dockDir, 'assets', 'package'), function () {
 
+        });
       });
     });
   }
