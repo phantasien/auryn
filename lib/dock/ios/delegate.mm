@@ -1,5 +1,7 @@
 #import "AppDelegate.h"
 
+#include <falkor.h>
+
 @interface AppDelegate ()
 
 @end
@@ -16,7 +18,10 @@
 
 - (void)applicationWillEnterForeground:(UIApplication *)application {}
 
-- (void)applicationDidBecomeActive:(UIApplication *)application {}
+- (void)applicationDidBecomeActive:(UIApplication *)application {
+  falkor::Engine engine;
+  engine.Run("print('Hello World !')");
+}
 
 - (void)applicationWillTerminate:(UIApplication *)application {}
 
