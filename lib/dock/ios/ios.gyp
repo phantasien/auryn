@@ -12,7 +12,8 @@
       ],
       'mac_bundle_resources': [
         './{{pascal project.name}}/Base.lproj/Main.storyboard',
-        './{{pascal project.name}}/Base.lproj/LaunchScreen.xib'
+        './{{pascal project.name}}/Base.lproj/LaunchScreen.xib',
+        './package'
       ],
       'include_dirs': [
         '{{falkor.base}}/include',
